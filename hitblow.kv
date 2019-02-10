@@ -40,3 +40,79 @@
             Button:
                 text: 'Yes'
                 on_press: root.yesButton()
+
+<Practice>:
+    BoxLayout:
+        orientation: 'vertical'
+
+        GridLayout:
+            rows: 3
+            cols: 5
+            padding: 10, 10
+            spacing: 10, 10
+
+            Button:
+                text: '1'
+            Button:
+                text: '2'
+            Button:
+                text: '3'
+            Button:
+                text: '4'
+            Button:
+                text: '5'
+            Button:
+                text: '6'
+            Button:
+                text: '7'
+            Button:
+                text: '8'
+            Button:
+                text: '9'
+            Button:
+                text: 'C'
+
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 30, 30
+
+            GridLayout:
+                rows: 1
+                cols: 4
+                size_hint_x: 0.8
+                orientation: 'horizontal'
+                padding: 20
+                spacing: 20
+
+                Button:
+                    text: '1'
+                Button:
+                    text: '1'
+                Button:
+                    text: '1'
+                Button:
+                    text: '1'
+
+            BoxLayout:
+                size_hint_x: 0.2
+                orientation: 'vertical'
+                spacing: 20
+                Button:
+                    size_hint_y: 0.8
+                    text: 'Attack!'
+                Button:
+                    size_hint_y: 0.2
+                    text: 'Back'
+
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            bar_width: 30
+            Label:
+                text: r'hogehoge!' * 100
+                font_size: 50
+
+                size_hint_x: 1.0
+                size_hint_y: None
+                text_size: self.width, None  # 内部のtextureの幅を自身の幅に合わせる。高さは固定しない(None)。
+                height: self.texture_size[1]  # 自身の高さを内部のtextureの高さに合わせる

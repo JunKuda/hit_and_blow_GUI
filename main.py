@@ -6,6 +6,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 
 Config.set('graphics', 'width', '400')
 Config.set('graphics', 'height', '300')
+Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 sm = ScreenManager()
 
