@@ -1,0 +1,42 @@
+<PaddingBoxLayout@BoxLayout>:
+    padding: 30
+
+<Menu>:
+    PaddingBoxLayout:
+        orientation: 'vertical'
+
+        Label:
+            size_hint_y: 0.2
+            font_size: 50
+            text: 'Hit and Blow!'
+
+        Button:
+            size_hint_y: 0.27
+            text: 'Your practice mode'
+            on_press: root.choose_mode('practice')
+
+        Button:
+            size_hint_y: 0.27
+            text: 'You vs Com mode'
+        Button:
+            size_hint_y: 0.27
+            text: 'Com vs Com mode'
+
+<ReadyView>:
+    size_hint: None, None
+    size: 350, 200
+    auto_dismiss: False
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Are you Ready?'
+            font_size: 30
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 20, 20
+            Button:
+                text: 'Back'
+                on_press: root.backButton()
+            Button:
+                text: 'Yes'
+                on_press: root.yesButton()
