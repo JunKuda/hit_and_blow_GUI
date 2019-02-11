@@ -4,6 +4,8 @@
 <Menu>:
     PaddingBoxLayout:
         orientation: 'vertical'
+        padding: 40
+        spacing: 40
 
         Label:
             size_hint_y: 0.2
@@ -40,6 +42,22 @@
             Button:
                 text: 'Yes'
                 on_press: root.yesButton()
+
+<YouWin>:
+    size_hint: None, None
+    size: 350, 200
+    auto_dismiss: False
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 30, 30
+        Label:
+            text: 'You win!'
+            font_size: 30
+
+        Button:
+            text: 'Back'
+            font_size: 30
+            on_press: root.backButton()
 
 <Practice>:
     BoxLayout:
@@ -114,6 +132,7 @@
                 Button:
                     size_hint_y: 0.8
                     text: 'Attack!'
+                    on_press: root.attack()
                 Button:
                     size_hint_y: 0.2
                     text: 'Back'
@@ -124,8 +143,8 @@
             do_scroll_y: True
             bar_width: 30
             Label:
-                text: r'hogehoge!' * 100
-                font_size: 50
+                text: root.msg
+                font_size: 40
 
                 size_hint_x: 1.0
                 size_hint_y: None
