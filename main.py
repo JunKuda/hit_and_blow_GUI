@@ -4,6 +4,7 @@ from kivy.properties import ListProperty, NumericProperty, StringProperty
 from kivy.config import Config
 from kivy.uix.screenmanager import ScreenManager, Screen
 import random
+import itertools
 
 Config.set('graphics', 'width', '400')
 Config.set('graphics', 'height', '300')
@@ -36,6 +37,17 @@ def hit_and_blow(defense_num, attack_num):
     return hit, blow
 
 
+# コンピューター思考ルーチン．候補のリスト（リストのリスト）から前回の攻撃結果と同じヒットアンドブロー数になるものを抽出
+def com_think_number(candidates, before_atk, before_hit, before_blow):
+    next_candidates = []
+    for candidate_num in candidates:
+        hit, blow = hit_and_blow(candidate_num, before_atk)
+        if hit == before_hit and blow == before_blow:
+            next_candidates.append(candidate_num)
+
+    return next_candidates
+
+
 # 最初に表示されるメニュー画面
 class Menu(Screen):
     def choose_mode(self, mode):
@@ -54,6 +66,7 @@ class Menu(Screen):
             sm.current = 'vs_com_mode'
 
 
+# 準備OK確認ポップアップ
 class ReadyView(ModalView):
     def yesButton(self):
         self.dismiss()
@@ -64,11 +77,17 @@ class ReadyView(ModalView):
         self.dismiss()
 
 
+# 勝利画面
 class YouWin(ModalView):
     def backButton(self):
         sm.transition.direction = 'right'
         sm.current = 'menu'
         self.dismiss()
+
+
+# 敗北画面（勝利画面を継承して，一部のプロパティをオーバーライドする）
+class Youlose(YouWin):
+    pass
 
 
 # Practiceモード
@@ -150,7 +169,9 @@ class VsComMode(Screen):
             self.msg = 'Duplication of number is forbidden.\n' + self.msg
         else:
             # スクリーン間で値を受け渡す方法がこれしかわからない
+            # もっといい方法ありそうだけど…
             sm.get_screen('vs_com_mode_battle').user_defense = self.user_defense
+            sm.get_screen('vs_com_mode_battle').__init__()
             sm.current = 'vs_com_mode_battle'
 
 
@@ -162,6 +183,20 @@ class VsComModeBattle(Practice):
     com_attack = ListProperty(random.sample([i for i in range(1, 10)], 4))
     com_hit = NumericProperty(0)
     com_blow = NumericProperty(0)
+    candidates = list(itertools.permutations(range(1, 10), 4))
+
+    # initもプロパティを追加した分，修正する．
+    def __init__(self, *args, **kwargs):
+        # Practiceの初期化もやる
+        super(Practice, self).__init__(*args, **kwargs)
+
+        self.user_defense = [1, 2, 3, 4]
+        self.com_attack = random.sample([i for i in range(1, 10)], 4)
+        self.com_hit = 0
+        self.com_blow = 0
+        self.candidates = list(itertools.permutations(range(1, 10), 4))
+        # なぜかメッセージが初期化されないので追加してある
+        self.msg = ''
 
     def attack(self):
         if not number_input_check(self.user_attack):
@@ -175,15 +210,19 @@ class VsComModeBattle(Practice):
             youwin = YouWin()
             youwin.open()
 
-        # コンピュータの思考ルーチンがここに入る
+        self.com_attack = random.choice(self.candidates)
 
         self.com_hit, self.com_blow = hit_and_blow(self.user_defense, self.com_attack)
-        self.msg = 'Com:' + str(self.com_attack) + str(self.com_hit) + ' ' + 'HIT!' + str(self.com_blow) + 'BLOW!\n' + self.msg
+        self.msg = 'Com:' + str(self.com_attack) + str(self.com_hit) + ' ' + 'HIT!' + str(
+            self.com_blow) + 'BLOW!\n' + self.msg
 
         if self.com_hit == 4:
-            # ここあとで直す
+            # ここあとで直す.敗北画面が入る予定．
             youlose = YouWin()
             youlose.open()
+
+        # 敗北判定まで終わったら，次の候補をcomが考える
+        self.candidates = com_think_number(self.candidates, self.com_attack, self.com_hit, self.com_blow)
 
 
 class HitBlowApp(App):
