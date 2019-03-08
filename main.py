@@ -79,22 +79,24 @@ class ReadyView(ModalView):
 
 # 勝利画面
 class YouWin(ModalView):
+    word = StringProperty('You win!')
+
     def backButton(self):
         sm.transition.direction = 'right'
         sm.current = 'menu'
         self.dismiss()
 
 
-# 敗北画面（勝利画面を継承して，一部のプロパティをオーバーライドする）
-class Youlose(YouWin):
-    pass
+# 敗北画面（勝利画面を継承して，StringPropertyのみを書き換えてある）
+class YouLose(YouWin):
+    word = StringProperty('You lose!')
 
 
 # Practiceモード
 class Practice(Screen):
     # ListPropertyにリストを渡すとunexpectedになる？
     user_attack = ListProperty([1, 2, 3, 4])
-    #    com_defense = ListProperty([1, 2, 3, 4])
+#   com_defense = ListProperty([1, 2, 3, 4])
     com_defense = ListProperty(random.sample([i for i in range(1, 10)], 4))
     # 複数のプロパティをつなげて宣言するとなんか変な挙動をする（ハマってしまった）
     digit_num = NumericProperty(0)
@@ -195,9 +197,10 @@ class VsComModeBattle(Practice):
         self.com_hit = 0
         self.com_blow = 0
         self.candidates = list(itertools.permutations(range(1, 10), 4))
-        # なぜかメッセージが初期化されないので追加してある
+        # なぜかメッセージが初期化されない(superの初期化でされるはずなのに…）ので追加してある
         self.msg = ''
 
+    # 攻撃ボタンが押されたときの処理
     def attack(self):
         if not number_input_check(self.user_attack):
             self.msg = 'Duplication of number is forbidden.\n' + self.msg
@@ -206,6 +209,7 @@ class VsComModeBattle(Practice):
         self.hit, self.blow = hit_and_blow(self.com_defense, self.user_attack)
         self.msg = 'You:' + str(self.user_attack) + ' ' + str(self.hit) + 'HIT!' + str(self.blow) + 'BLOW!\n' + self.msg
 
+        # 勝利画面呼び出し
         if self.hit == 4:
             youwin = YouWin()
             youwin.open()
@@ -216,9 +220,10 @@ class VsComModeBattle(Practice):
         self.msg = 'Com:' + str(self.com_attack) + str(self.com_hit) + ' ' + 'HIT!' + str(
             self.com_blow) + 'BLOW!\n' + self.msg
 
+        # 敗北画面呼び出し
         if self.com_hit == 4:
             # ここあとで直す.敗北画面が入る予定．
-            youlose = YouWin()
+            youlose = YouLose()
             youlose.open()
 
         # 敗北判定まで終わったら，次の候補をcomが考える
