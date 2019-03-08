@@ -107,6 +107,8 @@ class Practice(Screen):
     # メニューに戻った後，またPracticeモードに来たときに前のやつが残らないように
     def __init__(self, *args, **kwargs):
         super(Screen, self).__init__(*args, **kwargs)
+        self.user_attack = [1, 2, 3, 4]
+        self.com_defense = random.sample([i for i in range(1, 10)], 4)
         self.digit_num = 0
         self.digit_num = 0
         self.hit = 0
@@ -172,8 +174,8 @@ class VsComMode(Screen):
         else:
             # スクリーン間で値を受け渡す方法がこれしかわからない
             # もっといい方法ありそうだけど…
-            sm.get_screen('vs_com_mode_battle').user_defense = self.user_defense
             sm.get_screen('vs_com_mode_battle').__init__()
+            sm.get_screen('vs_com_mode_battle').user_defense = self.user_defense
             sm.current = 'vs_com_mode_battle'
 
 
